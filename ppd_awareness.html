@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PPD Awareness — See Beyond the Fear</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=Raleway:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #07060e;
+  --deep: #0d0b1a;
+  --red: #c0183a;
+  --red-bright: #e8193f;
+  --maroon: #7a0f26;
+  --white: #f0eaf5;
+  --purple: #6b4fa0;
+  --purple-light: #9b7fcb;
+  --purple-dim: #2a1f42;
+  --gold: #f5c842;
+  --muted: #8a7fa0;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: 'Raleway', sans-serif;
+  overflow-x: hidden;
+  cursor: none;
+}
+.cursor {
+  width: 18px; height: 18px;
+  border: 1.5px solid var(--red);
+  border-radius: 50%;
+  position: fixed; pointer-events: none; z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.08s ease;
+  mix-blend-mode: difference;
+}
+.cursor-dot {
+  width: 4px; height: 4px;
+  background: var(--red-bright);
+  border-radius: 50%;
+  position: fixed; pointer-events: none; z-index: 9999;
+  transform: translate(-50%, -50%);
+}
+/* INTRO */
+#intro {
+  position: fixed; inset: 0;
+  background: var(--black);
+  z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.eyes-field { position: absolute; inset: 0; }
+.eye-sprite {
+  position: absolute; opacity: 0;
+  animation: eyeAppear 0.4s ease forwards;
+}
+@keyframes eyeAppear {
+  0%   { transform: scale(0) rotate(var(--rot)); opacity: 0; }
+  60%  { opacity: 1; }
+  100% { transform: scale(1) rotate(var(--rot)); opacity: 1; }
+}
+@keyframes eyePulse {
+  0%,100% { transform: scale(1) rotate(var(--rot)); }
+  50%      { transform: scale(1.15) rotate(var(--rot)); filter: drop-shadow(0 0 12px var(--red)); }
+}
+@keyframes eyeFade {
+  0%   { opacity: 1; }
+  100% { opacity: 0.06; transform: scale(0.88) rotate(var(--rot)); }
+}
+.intro-text {
+  position: relative; z-index: 10;
+  text-align: center; opacity: 0;
+  animation: introTextIn 1.2s ease 2.8s forwards;
+}
+@keyframes introTextIn {
+  0%   { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.intro-text h1 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(2.2rem, 6vw, 5rem);
+  color: var(--white); letter-spacing: 0.06em; line-height: 1.1;
+  text-shadow: 0 0 60px rgba(192,24,58,0.8);
+}
+.intro-text h1 span { color: var(--red-bright); }
+.intro-text p {
+  font-size: 0.82rem; letter-spacing: 0.38em;
+  color: var(--purple-light); margin-top: 1.2rem; text-transform: uppercase;
+}
+.enter-btn {
+  margin-top: 2.5rem; display: inline-block;
+  padding: 0.85rem 3rem;
+  border: 1px solid var(--red); color: var(--white);
+  font-family: 'Cinzel', serif; font-size: 0.8rem;
+  letter-spacing: 0.3em; text-transform: uppercase;
+  cursor: pointer; background: transparent;
+  position: relative; overflow: hidden;
+}
+.enter-btn::before {
+  content: ''; position: absolute; inset: 0;
+  background: var(--red); transform: translateX(-100%);
+  transition: transform 0.35s ease;
+}
+.enter-btn:hover::before { transform: translateX(0); }
+.enter-btn span { position: relative; z-index: 1; }
+/* SITE */
+#site { opacity: 0; position: relative; z-index: 1; transition: opacity 1.2s ease; }
+#site.visible { opacity: 1; }
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 1.2rem 3rem;
+  display: flex; align-items: center; justify-content: space-between;
+  background: linear-gradient(to bottom, rgba(7,6,14,0.92), transparent);
+  backdrop-filter: blur(8px); opacity: 0; transition: opacity 0.8s ease;
+}
+nav.visible { opacity: 1; }
+.nav-logo { font-family: 'Cinzel Decorative', serif; font-size: 0.9rem; letter-spacing: 0.15em; }
+.nav-logo span { color: var(--red-bright); }
+.nav-links { display: flex; gap: 2.5rem; list-style: none; }
+.nav-links a {
+  font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none; font-family: 'Cinzel', serif;
+  transition: color 0.3s;
+}
+.nav-links a:hover { color: var(--red-bright); }
+@media(max-width: 768px){ .nav-links { display: none; } nav { padding: 1rem 1.5rem; } }
+/* HERO */
+#hero {
+  min-height: 100vh; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  position: relative; overflow: hidden; padding: 2rem;
+}
+.hero-vignette {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, transparent 25%, var(--black) 78%);
+  pointer-events: none; z-index: 2;
+}
+.figure-container { position: relative; z-index: 3; text-align: center; animation: figureIn 1.5s ease 0.3s both; }
+@keyframes figureIn {
+  0%   { opacity: 0; transform: translateY(60px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.figure-svg-wrap {
+  width: clamp(220px, 35vw, 420px); margin: 0 auto 2rem;
+  filter: drop-shadow(0 0 40px rgba(192,24,58,0.5));
+  animation: figureFloat 6s ease-in-out infinite;
+}
+@keyframes figureFloat {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-18px); }
+}
+.hero-title { font-family: 'Cinzel Decorative', serif; font-size: clamp(2.5rem,7vw,6.5rem); line-height: 1.0; }
+.hero-title .red { color: var(--red-bright); display: block; text-shadow: 0 0 80px rgba(232,25,63,0.5); }
+.hero-title .sub {
+  font-family: 'Cinzel', serif; font-size: clamp(1rem, 2.5vw, 2rem);
+  font-weight: 600; letter-spacing: 0.2em; display: block; margin-top: 0.3em;
+}
+.hero-title .awareness {
+  font-family: 'Raleway', sans-serif; font-size: clamp(0.7rem,1.4vw,1rem);
+  letter-spacing: 0.55em; font-weight: 300; color: var(--purple-light);
+  display: block; margin-top: 0.8em; text-transform: uppercase;
+}
+.scroll-hint {
+  position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+  z-index: 4; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+  opacity: 0.45; animation: scrollBob 2s ease-in-out infinite;
+}
+.scroll-hint span { font-size: 0.62rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--purple-light); }
+.scroll-line { width: 1px; height: 50px; background: linear-gradient(to bottom, var(--purple-light), transparent); }
+@keyframes scrollBob {
+  0%,100% { transform: translateX(-50%) translateY(0); }
+  50%      { transform: translateX(-50%) translateY(8px); }
+}
+/* DIVIDER */
+.divider {
+  width: 100%; height: 1px; position: relative; z-index: 2;
+  background: linear-gradient(to right, transparent, var(--purple-dim), var(--red), var(--purple-dim), transparent);
+}
+/* SECTION BASE */
+section { position: relative; z-index: 2; }
+.section-inner { max-width: 1200px; margin: 0 auto; padding: clamp(4rem,8vw,8rem) clamp(1.5rem,6vw,8rem); }
+.section-label {
+  font-family: 'Cinzel', serif; font-size: 0.63rem; letter-spacing: 0.6em;
+  color: var(--red); text-transform: uppercase; margin-bottom: 1.5rem;
+  display: flex; align-items: center; gap: 1rem;
+}
+.section-label::before { content: ''; width: 40px; height: 1px; background: var(--red); }
+.section-title { font-family: 'Cinzel Decorative', serif; font-size: clamp(1.8rem,4vw,3.5rem); line-height: 1.15; margin-bottom: 2.5rem; }
+.section-title .accent { color: var(--red-bright); }
+/* REVEAL */
+.reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease, transform 0.8s ease; }
+.reveal.in { opacity: 1; transform: translateY(0); }
+.reveal.d1 { transition-delay: 0.15s; }
+.reveal.d2 { transition-delay: 0.3s; }
+.reveal.d3 { transition-delay: 0.45s; }
+.reveal.d4 { transition-delay: 0.6s; }
+/* ── WHAT IS PPD ── */
+#what .section-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+@media(max-width:768px){ #what .section-inner { grid-template-columns: 1fr; gap: 3rem; } }
+.what-text p { font-size: 1.05rem; line-height: 1.85; color: rgba(240,234,245,0.78); font-weight: 300; margin-bottom: 1.5rem; }
+.what-text p strong { color: var(--white); font-weight: 500; }
+.stat-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.stat-card {
+  background: linear-gradient(135deg, rgba(106,79,160,0.1), rgba(192,24,58,0.07));
+  border: 1px solid rgba(106,79,160,0.22);
+  padding: 1.5rem; position: relative; overflow: hidden;
+  transition: border-color 0.3s, transform 0.3s;
+}
+.stat-card:hover { border-color: var(--red); transform: translateY(-4px); }
+.stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--red); }
+.stat-num { font-family: 'Cinzel Decorative', serif; font-size: 2rem; color: var(--red-bright); line-height: 1; margin-bottom: 0.4rem; }
+.stat-label { font-size: 0.76rem; letter-spacing: 0.08em; color: var(--muted); font-weight: 300; }
+/* ── GOAL ── */
+#goal {
+  background: linear-gradient(180deg, var(--black) 0%, var(--purple-dim) 50%, var(--black) 100%);
+  position: relative; overflow: hidden;
+}
+#goal::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(192,24,58,0.07), transparent);
+}
+#goal .section-inner { max-width: 900px; position: relative; z-index: 1; text-align: center; }
+.goal-body { font-size: clamp(1rem,1.8vw,1.2rem); line-height: 1.9; color: rgba(240,234,245,0.82); font-weight: 300; font-style: italic; }
+.goal-body strong { color: var(--white); font-style: normal; font-weight: 500; }
+/* ── FEELS ── */
+#feels .section-inner {}
+.feels-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.4rem; margin-top: 1rem; }
+.symptom-card {
+  background: rgba(13,11,26,0.85); border: 1px solid rgba(106,79,160,0.18);
+  padding: 2rem; position: relative; overflow: hidden;
+  transition: all 0.4s; cursor: default;
+}
+.symptom-card::after {
+  content: ''; position: absolute; bottom: 0; left: 0;
+  width: 0; height: 2px;
+  background: linear-gradient(to right, var(--red), var(--purple));
+  transition: width 0.4s ease;
+}
+.symptom-card:hover::after { width: 100%; }
+.symptom-card:hover { border-color: rgba(192,24,58,0.4); background: rgba(13,11,26,1); }
+.symptom-icon { font-size: 1.7rem; margin-bottom: 0.9rem; }
+.symptom-card h3 { font-family: 'Cinzel', serif; font-size: 0.85rem; letter-spacing: 0.15em; color: var(--red-bright); margin-bottom: 0.7rem; text-transform: uppercase; }
+.symptom-card p { font-size: 0.88rem; line-height: 1.7; color: rgba(240,234,245,0.68); font-weight: 300; }
+.quote-block { border-left: 2px solid var(--red); padding: 1.5rem 2rem; margin: 2rem 0; background: rgba(192,24,58,0.04); position: relative; }
+.quote-block::before { content: '"'; font-family: 'Cinzel Decorative', serif; font-size: 5rem; color: rgba(192,24,58,0.12); position: absolute; top: -0.5rem; left: 1rem; line-height: 1; }
+.quote-block p { font-style: italic; font-size: 1.1rem; line-height: 1.7; color: var(--white); font-weight: 300; position: relative; z-index: 1; }
+.quotes-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; margin-top: 2rem; }
+@media(max-width:600px){ .quotes-row { grid-template-columns: 1fr; } }
+.quote-pill {
+  border: 1px solid rgba(106,79,160,0.28); padding: 1.5rem;
+  font-style: italic; font-size: 0.88rem; line-height: 1.6;
+  color: rgba(240,234,245,0.72);
+  background: linear-gradient(135deg, rgba(106,79,160,0.06), transparent);
+}
+.quote-pill .attr { display: block; margin-top: 0.8rem; font-style: normal; font-size: 0.68rem; letter-spacing: 0.2em; color: var(--purple-light); text-transform: uppercase; }
+/* ── DEAL ── */
+#deal { background: linear-gradient(180deg, transparent, rgba(106,79,160,0.04), transparent); }
+.deal-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 2rem; margin-bottom: 3rem; }
+.deal-step {
+  padding: 2.5rem; background: rgba(7,6,14,0.9);
+  border: 1px solid rgba(106,79,160,0.18); position: relative;
+  transition: all 0.4s;
+}
+.deal-step:hover { border-color: rgba(192,24,58,0.5); background: rgba(13,11,26,1); }
+.step-num { font-family: 'Cinzel Decorative', serif; font-size: 4rem; color: rgba(192,24,58,0.1); line-height: 1; position: absolute; top: 1rem; right: 1.5rem; }
+.deal-step h3 { font-family: 'Cinzel', serif; font-size: 0.9rem; letter-spacing: 0.1em; color: var(--red-bright); margin-bottom: 1rem; text-transform: uppercase; }
+.deal-step p { font-size: 0.88rem; line-height: 1.75; color: rgba(240,234,245,0.68); font-weight: 300; }
+.deal-quotes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.2rem; margin-top: 3rem; }
+.dq-card { border-top: 2px solid var(--red); padding: 1.5rem; background: rgba(192,24,58,0.04); font-style: italic; font-size: 0.88rem; line-height: 1.6; color: rgba(240,234,245,0.78); }
+/* ── VIDEO ── */
+#video-sec .section-inner { text-align: center; }
+.video-frame {
+  position: relative; width: 100%; max-width: 800px; margin: 3rem auto 0;
+  aspect-ratio: 16/9; border: 1px solid rgba(192,24,58,0.4);
+  background: rgba(13,11,26,0.95);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.video-corner { position: absolute; width: 25px; height: 25px; border-color: var(--red); border-style: solid; }
+.vc-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+.vc-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+.vc-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+.vc-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+.video-placeholder-icon {
+  width: 70px; height: 70px; border: 2px solid rgba(192,24,58,0.5);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  margin-bottom: 1.5rem;
+}
+.play-tri { width:0; height:0; border-top:14px solid transparent; border-bottom:14px solid transparent; border-left:22px solid var(--red); margin-left:5px; }
+.video-placeholder-text { font-family: 'Cinzel', serif; font-size: 0.88rem; letter-spacing: 0.25em; color: var(--muted); text-transform: uppercase; }
+.video-sub { font-size: 0.74rem; letter-spacing: 0.1em; color: rgba(106,79,160,0.55); margin-top: 0.5rem; font-weight: 300; }
+/* ── CONTACT ── */
+#contact { background: linear-gradient(180deg, var(--black), var(--deep)); position: relative; overflow: hidden; }
+#contact::before { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: linear-gradient(to right, transparent, var(--red), transparent); }
+#contact .section-inner { text-align: center; max-width: 900px; }
+.contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.4rem; margin-top: 3rem; text-align: left; }
+.contact-card {
+  padding: 2rem; border: 1px solid rgba(106,79,160,0.22);
+  background: rgba(7,6,14,0.8); position: relative; transition: all 0.4s;
+}
+.contact-card:hover { border-color: var(--red); transform: translateY(-5px); }
+.contact-card-icon { font-size: 1.7rem; margin-bottom: 1rem; display: block; }
+.contact-card h4 { font-family: 'Cinzel', serif; font-size: 0.72rem; letter-spacing: 0.25em; color: var(--red-bright); text-transform: uppercase; margin-bottom: 0.5rem; }
+.contact-card p, .contact-card a { font-size: 0.86rem; color: rgba(240,234,245,0.68); font-weight: 300; line-height: 1.55; text-decoration: none; }
+.contact-card a:hover { color: var(--white); }
+.support-note { margin-top: 3rem; padding: 2rem; border: 1px solid rgba(192,24,58,0.22); background: rgba(192,24,58,0.04); text-align: center; }
+.support-note p { font-size: 0.88rem; color: rgba(240,234,245,0.62); font-weight: 300; line-height: 1.75; }
+.support-note strong { color: var(--red-bright); font-weight: 500; }
+footer { text-align: center; padding: 3rem 2rem; font-size: 0.72rem; letter-spacing: 0.2em; color: rgba(106,79,160,0.45); font-weight: 300; text-transform: uppercase; position: relative; z-index: 2; }
+footer span { color: var(--red); }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<!-- INTRO -->
+<div id="intro">
+  <div class="eyes-field" id="eyesField"></div>
+  <div class="intro-text" id="introText">
+    <h1>SEE<br><span>BEYOND</span><br>THE FEAR</h1>
+    <p>Paranoid Personality Disorder Awareness</p>
+    <button class="enter-btn" id="enterBtn"><span>Enter the Campaign</span></button>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <div class="nav-logo">PPD<span>.</span></div>
+  <ul class="nav-links">
+    <li><a href="#what">What is PPD</a></li>
+    <li><a href="#goal">Mission</a></li>
+    <li><a href="#feels">Experience</a></li>
+    <li><a href="#deal">Support</a></li>
+    <li><a href="#video-sec">Watch</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- SITE -->
+<div id="site">
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-vignette"></div>
+    <div class="figure-container">
+      <div class="figure-svg-wrap">
+        <svg viewBox="0 0 400 520" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="aura" cx="50%" cy="45%" r="55%">
+              <stop offset="0%" stop-color="#6b4fa0" stop-opacity="0.45"/>
+              <stop offset="100%" stop-color="#6b4fa0" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="grd" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#c0183a" stop-opacity="0.55"/>
+              <stop offset="100%" stop-color="#c0183a" stop-opacity="0"/>
+            </radialGradient>
+            <filter id="f1"><feGaussianBlur stdDeviation="10"/></filter>
+            <filter id="f2"><feGaussianBlur stdDeviation="4"/></filter>
+          </defs>
+          <ellipse cx="200" cy="250" rx="140" ry="155" fill="url(#aura)" filter="url(#f1)"/>
+          <ellipse cx="200" cy="400" rx="95" ry="28" fill="#c0183a" opacity="0.08" filter="url(#f1)"/>
+          <!-- LEGS -->
+          <path d="M130,415 Q162,370 200,365 Q238,370 270,415 Q252,435 200,440 Q148,435 130,415Z" fill="#150e22" stroke="#2d2244" stroke-width="1.2"/>
+          <!-- BODY -->
+          <path d="M158,285 Q147,328 144,370 Q172,385 200,387 Q228,385 256,370 Q253,328 242,285 Q222,264 200,262 Q178,264 158,285Z" fill="#110d1e" stroke="#2d2244" stroke-width="1.5"/>
+          <!-- ARMS -->
+          <path d="M168,285 Q153,255 158,222 Q163,204 178,194" fill="none" stroke="#1e1630" stroke-width="20" stroke-linecap="round"/>
+          <path d="M232,285 Q247,255 242,222 Q237,204 222,194" fill="none" stroke="#1e1630" stroke-width="20" stroke-linecap="round"/>
+          <!-- HANDS -->
+          <ellipse cx="178" cy="196" rx="24" ry="19" fill="#1e1630"/>
+          <ellipse cx="222" cy="196" rx="24" ry="19" fill="#1e1630"/>
+          <!-- HEAD -->
+          <ellipse cx="200" cy="178" rx="46" ry="50" fill="#160f25"/>
+          <!-- SWIRL LINES on mind -->
+          <path d="M172,132 Q200,112 228,132 Q240,117 220,102 Q200,92 180,102 Q160,117 172,132Z" fill="none" stroke="#c0183a" stroke-width="2" opacity="0.6"/>
+          <path d="M177,122 Q200,104 223,122" fill="none" stroke="#7a0f26" stroke-width="1.5" opacity="0.6"/>
+          <!-- LIGHTNING BOLTS -->
+          <polygon points="140,158 132,183 142,183 134,208" fill="#f5c842" opacity="0.92"/>
+          <polygon points="260,158 268,183 258,183 266,208" fill="#f5c842" opacity="0.92"/>
+          <!-- EYE TOP -->
+          <g transform="translate(200,100)">
+            <ellipse cx="0" cy="0" rx="23" ry="15" fill="#c0183a"/>
+            <ellipse cx="0" cy="0" rx="14" ry="9" fill="#fff" opacity="0.95"/>
+            <circle cx="0" cy="0" r="6.5" fill="#100820"/>
+            <circle cx="0" cy="0" r="3.2" fill="#7a0f26"/>
+            <circle cx="-2" cy="-2" r="1.5" fill="#fff" opacity="0.8"/>
+          </g>
+          <!-- EYE LEFT -->
+          <g transform="translate(158,121)">
+            <ellipse cx="0" cy="0" rx="19" ry="13" fill="#b01535"/>
+            <ellipse cx="0" cy="0" rx="11" ry="7.5" fill="#fff" opacity="0.93"/>
+            <circle cx="0" cy="0" r="5.5" fill="#100820"/>
+            <circle cx="0" cy="0" r="2.8" fill="#7a0f26"/>
+            <circle cx="-1.5" cy="-1.5" r="1.2" fill="#fff" opacity="0.8"/>
+          </g>
+          <!-- EYE RIGHT -->
+          <g transform="translate(242,121)">
+            <ellipse cx="0" cy="0" rx="19" ry="13" fill="#b01535"/>
+            <ellipse cx="0" cy="0" rx="11" ry="7.5" fill="#fff" opacity="0.93"/>
+            <circle cx="0" cy="0" r="5.5" fill="#100820"/>
+            <circle cx="0" cy="0" r="2.8" fill="#7a0f26"/>
+            <circle cx="-1.5" cy="-1.5" r="1.2" fill="#fff" opacity="0.8"/>
+          </g>
+          <!-- EYE UPPER LEFT -->
+          <g transform="translate(172,94)">
+            <ellipse cx="0" cy="0" rx="16" ry="11" fill="#a01030"/>
+            <ellipse cx="0" cy="0" rx="9" ry="6" fill="#fff" opacity="0.9"/>
+            <circle cx="0" cy="0" r="4.5" fill="#100820"/>
+            <circle cx="-1" cy="-1" r="1" fill="#fff" opacity="0.75"/>
+          </g>
+          <!-- EYE UPPER RIGHT -->
+          <g transform="translate(227,94)">
+            <ellipse cx="0" cy="0" rx="16" ry="11" fill="#a01030"/>
+            <ellipse cx="0" cy="0" rx="9" ry="6" fill="#fff" opacity="0.9"/>
+            <circle cx="0" cy="0" r="4.5" fill="#100820"/>
+            <circle cx="-1" cy="-1" r="1" fill="#fff" opacity="0.75"/>
+          </g>
+          <!-- scatter -->
+          <circle cx="155" cy="108" r="3" fill="#c0183a" opacity="0.55"/>
+          <circle cx="248" cy="106" r="2.5" fill="#c0183a" opacity="0.45"/>
+          <circle cx="200" cy="76" r="2" fill="#c0183a" opacity="0.4"/>
+          <path d="M148,102 L142,93" stroke="#c0183a" stroke-width="2" stroke-linecap="round" opacity="0.45"/>
+          <path d="M253,102 L259,93" stroke="#c0183a" stroke-width="2" stroke-linecap="round" opacity="0.45"/>
+          <ellipse cx="200" cy="430" rx="65" ry="10" fill="#6b4fa0" opacity="0.1" filter="url(#f2)"/>
+        </svg>
+      </div>
+      <div class="hero-title">
+        <span class="red">PARANOID</span>
+        <span class="sub">Personality Disorder</span>
+        <span class="awareness">— Awareness Campaign —</span>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 1. WHAT IS PPD -->
+  <section id="what">
+    <div class="section-inner">
+      <div class="what-text">
+        <div class="section-label reveal">01 — Understanding</div>
+        <h2 class="section-title reveal d1">What Is <span class="accent">PPD?</span></h2>
+        <p class="reveal d2">Paranoid Personality Disorder — PPD — is a mental health condition where a person experiences <strong>deep, persistent distrust and suspicion of others</strong>, even without real evidence to support it.</p>
+        <p class="reveal d3">It's not about being "difficult." For someone living with PPD, the fear is completely real. <strong>Every conversation can feel like a hidden threat.</strong> Every glance feels like a judgment. Every silence feels loaded.</p>
+        <p class="reveal d4">People with PPD often feel like the world is working against them — and no matter how much reassurance they receive, that sense of danger doesn't go away. It shapes how they think, how they relate, and how they move through life.</p>
+      </div>
+      <div class="reveal d2">
+        <div class="stat-cards">
+          <div class="stat-card">
+            <div class="stat-num">2–4%</div>
+            <div class="stat-label">of the global population lives with PPD</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">Often</div>
+            <div class="stat-label">goes undiagnosed or misunderstood</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">Chronic</div>
+            <div class="stat-label">persistent pattern of distrust & suspicion</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">Real</div>
+            <div class="stat-label">The fear feels as real as any physical pain</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 2. GOAL -->
+  <section id="goal">
+    <div class="section-inner">
+      <div class="section-label reveal" style="justify-content:center">02 — Our Mission</div>
+      <h2 class="section-title reveal d1" style="text-align:center">Why We <span class="accent">Speak Up</span></h2>
+      <p class="goal-body reveal d2">
+        We are a group of students driven by a passion for creativity, storytelling, and social impact. Through this awareness campaign, we aim to use design, media, and powerful messaging to shed light on important but often misunderstood topics in mental health. By combining cinematic visuals with meaningful content, we strive to create an experience that not only informs, but also connects with people on a deeper emotional level. This project reflects our belief that <strong>awareness is the first step toward understanding and change.</strong>
+      </p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 3. WHAT IT FEELS LIKE + SYMPTOMS -->
+  <section id="feels">
+    <div class="section-inner">
+      <div class="section-label reveal">03 — The Experience</div>
+      <h2 class="section-title reveal d1">What It <span class="accent">Feels Like</span></h2>
+
+      <div class="quote-block reveal d2">
+        <p>"Living with constant doubt isn't a choice, it's a silent struggle."</p>
+      </div>
+
+      <div class="feels-grid">
+        <div class="symptom-card reveal">
+          <div class="symptom-icon">👁</div>
+          <h3>Constant Suspicion</h3>
+          <p>A persistent belief that others are out to harm, deceive, or exploit — even close friends and family. Trust becomes almost impossible to give.</p>
+        </div>
+        <div class="symptom-card reveal d1">
+          <div class="symptom-icon">🔇</div>
+          <h3>Hidden Meanings</h3>
+          <p>Ordinary remarks feel like veiled attacks. Neutral expressions feel loaded with threat. Every interaction is analyzed for danger others don't see.</p>
+        </div>
+        <div class="symptom-card reveal d2">
+          <div class="symptom-icon">🔒</div>
+          <h3>Guarded & Withdrawn</h3>
+          <p>Sharing personal information feels dangerous. Confiding in someone feels like handing them a weapon. Isolation becomes self-protection.</p>
+        </div>
+        <div class="symptom-card reveal d3">
+          <div class="symptom-icon">⚡</div>
+          <h3>Intense Reactions</h3>
+          <p>Small slights feel catastrophic. Perceived criticism triggers deep anger or betrayal — emotions that are hard to release.</p>
+        </div>
+        <div class="symptom-card reveal d2">
+          <div class="symptom-icon">🌑</div>
+          <h3>Relentless Hypervigilance</h3>
+          <p>The mind always scans for danger. Always alert. Always ready. This constant watchfulness drains peace of mind entirely.</p>
+        </div>
+        <div class="symptom-card reveal d3">
+          <div class="symptom-icon">💬</div>
+          <h3>Fractured Relationships</h3>
+          <p>Forming and keeping connections becomes a constant struggle. Love and friendship feel unsafe when trust is impossible to sustain.</p>
+        </div>
+      </div>
+
+      <div class="quotes-row">
+        <div class="quote-pill reveal d1">
+          "When fear writes the story, even truth sounds like a lie."
+          <span class="attr">— On distorted perception</span>
+        </div>
+        <div class="quote-pill reveal d2">
+          "The world feels like a stage of hidden eyes — watching, waiting, whispering."
+          <span class="attr">— On hypervigilance</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 4. HOW TO DEAL -->
+  <section id="deal">
+    <div class="section-inner">
+      <div class="section-label reveal">04 — Finding Ground</div>
+      <h2 class="section-title reveal d1">How To <span class="accent">Navigate It</span></h2>
+      <p class="reveal d2" style="font-size:1rem; color:rgba(240,234,245,0.68); font-weight:300; line-height:1.8; max-width:680px; margin-bottom:2.5rem;">
+        Living with — or alongside someone with PPD — is challenging. But understanding, professional support, and consistent compassion can open a path forward.
+      </p>
+
+      <div class="deal-steps">
+        <div class="deal-step reveal">
+          <div class="step-num">01</div>
+          <h3>Seek Professional Support</h3>
+          <p>Therapy — particularly cognitive-behavioral therapy — helps people examine their thought patterns and slowly build a new relationship with trust. A compassionate therapist can be truly transformative.</p>
+        </div>
+        <div class="deal-step reveal d1">
+          <div class="step-num">02</div>
+          <h3>Build Safety, Slowly</h3>
+          <p>Recovery isn't about forcing trust overnight. It's about finding small, consistent moments of safety. Grounding techniques, journaling, and identifying safe people are gentle first steps.</p>
+        </div>
+        <div class="deal-step reveal d2">
+          <div class="step-num">03</div>
+          <h3>Educate & Stand Beside</h3>
+          <p>For those around someone with PPD, patience matters more than logic. Learning to respond with calm consistency — rather than frustration — slowly builds an invaluable bridge.</p>
+        </div>
+      </div>
+
+      <div class="deal-quotes">
+        <div class="dq-card reveal">
+          "In the silence, every shadow speaks… and none of them feel safe."
+        </div>
+        <div class="dq-card reveal d1">
+          "Trust fades like light at sunset, leaving only questions in the dark."
+        </div>
+        <div class="dq-card reveal d2">
+          "Living with constant doubt isn't a choice, it's a silent struggle."
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 5. VIDEO -->
+  <section id="video-sec">
+    <div class="section-inner">
+      <div class="section-label reveal" style="justify-content:center">05 — Watch</div>
+      <h2 class="section-title reveal d1" style="text-align:center">Our <span class="accent">Campaign Video</span></h2>
+      <p class="reveal d2" style="color:rgba(240,234,245,0.58); font-weight:300; font-size:0.94rem; max-width:520px; margin:0 auto;">
+        A cinematic short film crafted to bring the inner world of PPD to life.
+      </p>
+      <div class="video-frame reveal d3">
+        <div class="vc-tl video-corner"></div>
+        <div class="vc-tr video-corner"></div>
+        <div class="vc-bl video-corner"></div>
+        <div class="vc-br video-corner"></div>
+        <div class="video-placeholder-icon">
+          <div class="play-tri"></div>
+        </div>
+        <div class="video-placeholder-text">Awareness Film</div>
+        <div class="video-sub">Coming Soon — Campaign Video</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 6. CONTACT -->
+  <section id="contact">
+    <div class="section-inner">
+      <div class="section-label reveal" style="justify-content:center">06 — Reach Out</div>
+      <h2 class="section-title reveal d1" style="text-align:center">Contact &amp; <span class="accent">Support</span></h2>
+      <p class="reveal d2" style="color:rgba(240,234,245,0.62); font-weight:300; font-size:0.93rem; line-height:1.75; max-width:600px; margin:0 auto;">
+        You are not alone. Whether you're seeking information, want to connect with us, or need someone to talk to — we're here.
+      </p>
+      <div class="contact-grid">
+        <div class="contact-card reveal">
+          <span class="contact-card-icon">📬</span>
+          <h4>Campaign Team</h4>
+          <p>Questions, collaborations, or media inquiries about the campaign.</p>
+          <a href="mailto:ppd.awareness@school.edu" style="display:block; margin-top:0.8rem; color:var(--purple-light);">ppd.awareness@school.edu</a>
+        </div>
+        <div class="contact-card reveal d1">
+          <span class="contact-card-icon">🧠</span>
+          <h4>Mental Health Resources</h4>
+          <p>If you or someone you know is struggling, reaching out to a licensed mental health professional is always a brave first step.</p>
+        </div>
+        <div class="contact-card reveal d2">
+          <span class="contact-card-icon">📞</span>
+          <h4>Crisis Support</h4>
+          <p>IASP Crisis Centers:<br><a href="https://www.iasp.info/resources/Crisis_Centres/" target="_blank">Find your local center</a></p>
+          <p style="margin-top:0.5rem;">WHO Mental Health:<br><a href="https://www.who.int/mental_health/en/" target="_blank">who.int/mental_health</a></p>
+        </div>
+        <div class="contact-card reveal d3">
+          <span class="contact-card-icon">🌐</span>
+          <h4>Share the Campaign</h4>
+          <p>Talk about it. Share it. Break the silence — one conversation at a time.</p>
+          <p style="margin-top:0.8rem; color:var(--purple-light);">#SeeTheFear #PPDAwareness</p>
+        </div>
+      </div>
+      <div class="support-note reveal">
+        <p><strong>A note of care:</strong> This campaign was created by students for educational awareness. If you believe you or someone you love may have PPD, please consult a qualified mental health professional. <strong>Awareness is the beginning — professional support is the path forward.</strong></p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>PPD Awareness Campaign &nbsp;|&nbsp; Created with <span>♥</span> by our team &nbsp;|&nbsp; School Project 2026</p>
+  </footer>
+
+</div><!-- #site -->
+
+<script>
+// CURSOR
+const cursor = document.getElementById('cursor');
+const dot = document.getElementById('cursorDot');
+let mx=0,my=0,cx=0,cy=0;
+document.addEventListener('mousemove', e => {
+  mx=e.clientX; my=e.clientY;
+  dot.style.left=mx+'px'; dot.style.top=my+'px';
+});
+(function animCursor(){
+  cx+=(mx-cx)*0.12; cy+=(my-cy)*0.12;
+  cursor.style.left=cx+'px'; cursor.style.top=cy+'px';
+  requestAnimationFrame(animCursor);
+})();
+
+// EYE BUILDER
+function makeEyeSVG(size, rot) {
+  const reds=['#c0183a','#a01530','#e8193f','#8c1228'];
+  const c=reds[Math.floor(Math.random()*reds.length)];
+  const rx=size*.5, ry=size*.32;
+  const ir=size*.18, hr=size*.06;
+  return `<svg width="${size}" height="${size*.7}" viewBox="0 0 ${size} ${size*.7}" style="display:block">
+    <ellipse cx="${size/2}" cy="${size*.35}" rx="${rx}" ry="${ry}" fill="${c}" opacity="0.88"/>
+    <ellipse cx="${size/2}" cy="${size*.35}" rx="${rx*.68}" ry="${ry*.75}" fill="#fff" opacity="0.92"/>
+    <circle cx="${size/2}" cy="${size*.35}" r="${ir}" fill="#080510"/>
+    <circle cx="${size/2}" cy="${size*.35}" r="${ir*.6}" fill="${c}" opacity="0.65"/>
+    <circle cx="${size/2-size*.07}" cy="${size*.35-size*.07}" r="${hr}" fill="#fff" opacity="0.8"/>
+  </svg>`;
+}
+
+// GENERATE INTRO EYES
+const field=document.getElementById('eyesField');
+const vw=window.innerWidth, vh=window.innerHeight;
+const count=Math.min(Math.floor(vw*vh/11000),90);
+const eyeEls=[];
+
+for(let i=0;i<count;i++){
+  const sz=28+Math.random()*85;
+  const rot=(Math.random()-.5)*42;
+  const x=Math.random()*(vw-sz);
+  const y=Math.random()*(vh-sz*.7);
+  const delay=Math.random()*1.9;
+
+  const el=document.createElement('div');
+  el.className='eye-sprite';
+  el.style.cssText=`left:${x}px;top:${y}px;--rot:${rot}deg;animation-delay:${delay}s;animation-duration:${.3+Math.random()*.25}s;`;
+  el.innerHTML=makeEyeSVG(sz,rot);
+  field.appendChild(el);
+  eyeEls.push({el,rot});
+}
+
+// After eyes appear: pulse
+setTimeout(()=>{
+  eyeEls.forEach(({el,rot})=>{
+    const dur=.55+Math.random()*.65;
+    el.style.animation=`eyePulse ${dur}s ease-in-out infinite`;
+    el.style.setProperty('--rot',rot+'deg');
+  });
+},2300);
+
+// ENTER BTN
+document.getElementById('enterBtn').addEventListener('click',()=>{
+  // Stagger fade
+  eyeEls.forEach(({el,rot},i)=>{
+    setTimeout(()=>{
+      el.style.animation='eyeFade .75s ease forwards';
+      el.style.setProperty('--rot',rot+'deg');
+    },i*7);
+  });
+  setTimeout(()=>{
+    const intro=document.getElementById('intro');
+    intro.style.transition='opacity .8s ease';
+    intro.style.opacity='0';
+    setTimeout(()=>{
+      intro.style.display='none';
+      document.getElementById('site').classList.add('visible');
+      document.getElementById('mainNav').classList.add('visible');
+      drawBgEyes();
+    },800);
+  },1300);
+});
+
+// BG CANVAS EYES
+function drawBgEyes(){
+  const canvas=document.createElement('canvas');
+  canvas.style.cssText='position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.045;';
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+  document.body.insertBefore(canvas,document.getElementById('site'));
+  const ctx=canvas.getContext('2d');
+
+  function eye(x,y,r,rot,a){
+    ctx.save();
+    ctx.globalAlpha=a;
+    ctx.translate(x,y);
+    ctx.rotate(rot);
+    ctx.beginPath(); ctx.ellipse(0,0,r,r*.55,0,0,Math.PI*2); ctx.fillStyle='#c0183a'; ctx.fill();
+    ctx.beginPath(); ctx.ellipse(0,0,r*.65,r*.38,0,0,Math.PI*2); ctx.fillStyle='#fff'; ctx.fill();
+    ctx.beginPath(); ctx.arc(0,0,r*.22,0,Math.PI*2); ctx.fillStyle='#08050f'; ctx.fill();
+    ctx.restore();
+  }
+
+  for(let i=0;i<28;i++){
+    eye(
+      Math.random()*canvas.width,
+      Math.random()*canvas.height,
+      15+Math.random()*38,
+      (Math.random()-.5)*1.2,
+      .35+Math.random()*.65
+    );
+  }
+}
+
+// SCROLL REVEAL
+const revEls=document.querySelectorAll('.reveal');
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); });
+},{threshold:.1});
+revEls.forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
